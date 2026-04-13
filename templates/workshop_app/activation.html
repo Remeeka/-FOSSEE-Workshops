@@ -1,0 +1,72 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+    Awaiting activation
+{% endblock %}
+
+{% block header %}
+    <nav class="fixed top-0 z-50 w-full border-b border-gray-800 bg-gray-900/95 text-white shadow-lg backdrop-blur">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
+            <a class="inline-flex items-center gap-2 text-lg font-semibold tracking-wide text-white no-underline transition hover:text-sky-300" href="/">
+                <span class="material-icons text-sky-400">school</span>
+                <span>FOSSEE Workshops</span>
+            </a>
+            {% if request.user.profile.is_email_verified %}
+            <div class="flex items-center gap-2">
+                <a class="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'workshop_app:view_profile' %}">Profile</a>
+                <a class="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'workshop_app:logout' %}">Logout</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+{% endblock %}
+
+{% block extra %}
+
+{% endblock %}
+
+{% block content %}
+    {% if status == '2' %}
+        <div class="mx-auto max-w-4xl">
+            <div class="content-card p-6 sm:p-8">
+                <p> Your email is already verified, Click
+                    <a href="{% url 'workshop_app:index' %}">here</a>
+                </p>
+            </div>
+        </div>
+    {% elif status == '1' %}
+        <script type="text/javascript">
+            window.setTimeout(function () {
+                location.href = "{% url 'workshop_app:register' %}"
+            }, 3000);
+        </script>
+        <div class="mx-auto max-w-4xl">
+            <div class="content-card p-6 sm:p-8">
+                <p> Your activation has expired please register again</p>
+            </div>
+        </div>
+    {% elif status == '0' %}
+        <div class="mx-auto max-w-4xl">
+            <div class="content-card p-6 sm:p-8">
+                <p> Your account has been activated. Click
+                    <a href="{% url 'workshop_app:index' %}">here</a>
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <script type="text/javascript">
+            window.setTimeout(function () {
+                location.href = "{% url 'workshop_app:logout' %}"
+            }, 5000);
+        </script>
+
+        <div class="mx-auto max-w-4xl">
+            <div class="content-card p-6 sm:p-8">
+                <h1>Activation Awaiting</h1>
+                <p>The Activation Link has been sent to your email. The link expires in <strong>24hours</strong> from
+                    the date of registration. You will be logged out automatically
+                </p>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

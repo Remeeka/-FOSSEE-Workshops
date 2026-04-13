@@ -1,0 +1,130 @@
+{% extends "workshop_app/base.html" %}
+{% load static %}
+
+{% block title %}
+    Propose a workshop
+{% endblock %}
+
+{% block extra-dependencies %}
+    <link rel="stylesheet" href="{% static 'workshop_app/css/jquery-ui.css' %}" type="text/css"/>
+    <script src="{% static 'workshop_app/js/jquery-1.12.4.js' %}"></script>
+    <script src="{% static 'workshop_app/js/jquery-ui.min.js' %}"></script>
+{% endblock %}
+
+{% block extra-custom-scripts %}
+    <script>
+        var dateToday = new Date();
+        var upto = new Date();
+
+        dateToday.setDate(dateToday.getDate() + 3);
+        upto.setFullYear(dateToday.getFullYear() + 1);
+
+        $(function () {
+            $(".datepicker").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                minDate: dateToday,
+                maxDate: upto,
+                beforeShowDay: $.datepicker.noWeekends,
+            });
+
+
+            $('#disp_tnc').click(function (e) {
+                e.preventDefault()
+                if ($('#id_workshop_type').val() === '')
+                    $('.modal-body').html("<p class='text-danger'>Please select a workshop type</p>")
+                else {
+                    $.ajax({
+                        url: '/workshop/type_tnc/' + $('#id_workshop_type').val(),
+                        success: function (data) {
+                            $('.modal-body').html(data.tnc)
+                        }
+                    })
+                }
+            })
+        });
+    </script>
+{% endblock %}
+
+
+{% block content %}
+    <style type="text/css">
+        .errorlist {
+            color: red;
+        }
+
+    .modal-open .modal{
+        overflow-y: hidden;
+    }
+    </style>
+
+    <div class="mx-auto w-full max-w-5xl px-2 sm:px-4">
+        <div class="alert alert-info text-left">
+            Note: Before proposing the workshop, please check about the workshop in the
+            <strong>Workshop Types</strong> section
+        </div>
+        <div class="mt-6">
+            <div class="mx-auto w-full max-w-3xl rounded-2xl bg-white shadow-sm ring-1 ring-gray-200">
+                <div class="border-b border-gray-200 px-5 py-4 sm:px-6">
+                    <h3 class="text-xl font-semibold text-gray-900">Propose Workshop</h3>
+                    <p class="mt-1 text-sm text-gray-600">Fill in the details below to book a workshop slot.</p>
+                </div>
+                <div class="px-5 py-5 sm:px-6">
+                        <form method="post" class="space-y-5 text-left">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label for="id_workshop_type" class="mb-1.5 block text-sm font-semibold text-gray-700">Workshop Type</label>
+                                    <div class="[&_select]:w-full [&_select]:rounded-md [&_select]:border [&_select]:border-gray-300 [&_select]:bg-white [&_select]:px-3 [&_select]:py-2.5 [&_select]:text-sm [&_select:focus]:border-sky-400 [&_select:focus]:outline-none [&_select:focus]:ring-2 [&_select:focus]:ring-sky-200">
+                                        {{ form.workshop_type }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="id_date" class="mb-1.5 block text-sm font-semibold text-gray-700">Preferred Date</label>
+                                    <div class="[&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:border-gray-300 [&_input]:bg-white [&_input]:px-3 [&_input]:py-2.5 [&_input]:text-sm [&_input:focus]:border-sky-400 [&_input:focus]:outline-none [&_input:focus]:ring-2 [&_input:focus]:ring-sky-200">
+                                        {{ form.date }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rounded-md bg-gray-50 px-3 py-3 text-sm text-gray-700">
+                                <label class="mb-0 inline-flex items-center gap-2">
+                                    {{ form.tnc_accepted }}
+                                    <span>I accept the
+                                    <a class="font-medium text-sky-600 no-underline hover:text-sky-700" href="#" id="disp_tnc" data-toggle="modal"
+                                    data-target="#exampleModalCenter">
+                                        terms and conditions
+                                    </a></span>
+                                </label>
+                            </div>
+                            {% if form.errors %}
+                                <div class="rounded-md border border-red-200 bg-red-50 p-3 text-left">
+                                    <h5 class="mb-2 text-sm font-semibold text-red-700">Please fix the following errors:</h5>
+                                    {{ form.errors }}
+                                </div>
+                            {% endif %}
+                            <div class="flex justify-end">
+                                <button class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2" type="submit">Submit Request</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Terms and Conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

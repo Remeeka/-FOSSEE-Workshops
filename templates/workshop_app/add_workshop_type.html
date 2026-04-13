@@ -1,0 +1,52 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+    Add new Workshop type
+{% endblock %}
+
+{% block content %}
+    <div class="container form-layout rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+        <h2 class="text-center m-2">New Workshop Type</h2>
+        <br>
+        <form method="post">
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_name">Workshop Name</label></div>
+                <div class="col text-left">
+                    <div class="row"><div class="col">{{ form.name }}</div></div>
+                    <div class="row m-1 text-danger"><div class="col">{{ form.name.errors }}</div></div>
+                </div>
+
+            </div>
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_duration">Duration</label></div>
+                <div class="col text-left">
+                    <div class="row"><div class="col">{{ form.duration }}</div></div>
+                    <div class="row m-1 text-muted"><div class="col">{{ form.duration.help_text }}</div></div>
+                    <div class="row m-1 text-danger"><div class="col">{{ form.duration.errors }}</div></div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_description">Description</label></div>
+                <div class="col text-left">
+                    <div class="row"><div class="col">{{ form.description }}</div></div>
+                    <div class="row m-1 text-danger"><div class="col">{{ form.description.errors }}</div></div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_terms_and_conditions">Terms and Conditions</label></div>
+                <div class="col text-left">
+                    <div class="row"><div class="col">{{ form.terms_and_conditions }}</div></div>
+                    <div class="row m-1 text-danger"><div class="col">{{ form.terms_and_conditions.errors }}</div></div>
+                </div>
+            </div>
+
+            <div class="row my-3">
+                <div class="col-12">
+                    <div class="form-actions end m-3">
+                        <button type="submit" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Create</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

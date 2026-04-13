@@ -1,0 +1,113 @@
+{% extends 'workshop_app/base.html' %}
+{% load static %}
+
+{% block title %}
+    Add new Workshop type
+{% endblock %}
+
+{% block extra-dependencies %}
+{% endblock %}
+
+{% block extra-custom-scripts %}
+
+    <script src="{% static 'workshop_app/js/jquery.formset.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container form-layout rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+        <h2 class="text-center m-2">View / Edit Workshop Type</h2>
+        <br>
+        <form method="post" enctype="multipart/form-data">
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_name">Workshop Name</label></div>
+                <div class="col text-left">
+                    <div class="row">
+                        <div class="col">{{ form.name }}</div>
+                    </div>
+                    <div class="row m-1 text-danger">
+                        <div class="col">{{ form.name.errors }}</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_duration">Duration</label></div>
+                <div class="col text-left">
+                    <div class="row">
+                        <div class="col">{{ form.duration }}</div>
+                    </div>
+                    <div class="row m-1 text-muted">
+                        <div class="col">{{ form.duration.help_text }}</div>
+                    </div>
+                    <div class="row m-1 text-danger">
+                        <div class="col">{{ form.duration.errors }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_description">Description</label></div>
+                <div class="col text-left">
+                    <div class="row">
+                        <div class="col">{{ form.description }}</div>
+                    </div>
+                    <div class="row m-1 text-danger">
+                        <div class="col">{{ form.description.errors }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12 col-md-3 font-weight-bold"><label for="id_terms_and_conditions">Terms and Conditions</label></div>
+                <div class="col text-left">
+                    <div class="row">
+                        <div class="col">{{ form.terms_and_conditions }}</div>
+                    </div>
+                    <div class="row m-1 text-danger">
+                        <div class="col">{{ form.terms_and_conditions.errors }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-center m-2">Attachments</h2>
+            {{ form_file.management_form }}
+            {{ form_file.non_form_errors }}
+            {% for form in form_file %}
+                <div class="inline {{ form_file.prefix }} my-4">
+                    <div class="row">
+                        <div class="col-11">
+                            {% for field in form %}
+                                <div class="col-6">{{ field }}</div>
+                            {% endfor %}
+                        </div>
+                    {% if form.id.value %}
+                    <div class="col-1">
+                        <a href="{% url 'workshop_app:delete_attachment_file' form.id.value %}" class="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white no-underline transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">Delete</a>
+                    </div>
+                    {% endif %}
+                    </div>
+
+                </div>
+                <hr>
+            {% endfor %}
+            <div class="row my-3">
+                <div class="col-12">
+                    <div class="form-actions end m-3">
+                        <button type="submit" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br><br><br><br>
+    <script type="text/javascript">
+        $(function () {
+            $(".inline.{{ form_file.prefix }}").formset({
+                prefix: "{{ form_file.prefix }}", // The form prefix for your django formset
+                addCssClass: "inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 inline-form-add", // CSS class applied to the add link
+                deleteCssClass: "hidden", // CSS class applied to the delete link
+                addText: 'Add another attachment', // Text for the add link
+                deleteText: '',
+                formCssClass: 'inline-form' // CSS class applied to each form in a formset
+            })
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+{% load custom_filters %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}
+            HomePage
+        {% endblock %}
+    </title>
+
+    <script src="{% static 'workshop_app/js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'workshop_app/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'workshop_app/js/popper.min.js' %}"></script>
+    <script src="{% static 'workshop_app/js/toastr.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    {% block extra-dependencies %}
+    {% endblock %}
+
+    <link rel="stylesheet" href="{% static 'workshop_app/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop_app/css/toastr.min.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'workshop_app/css/base.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'workshop_app/css/font-awesome.css' %}" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+    {% block extra-custom-scripts %}
+    {% endblock %}
+
+</head>
+
+<body>
+{% block header %}
+    <nav class="fixed top-0 z-50 w-full border-b border-gray-800 bg-gray-900/95 text-white shadow-lg backdrop-blur">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
+            {% if user.is_authenticated %}
+            <a class="inline-flex items-center gap-2 text-lg font-semibold tracking-wide text-white no-underline transition hover:text-sky-300" href="{% url 'workshop_app:index' %}">
+                <span class="material-icons text-sky-400">school</span>
+                <span>FOSSEE Workshops</span>
+            </a>
+            {% else %}
+            <a class="inline-flex items-center gap-2 text-lg font-semibold tracking-wide text-white no-underline transition hover:text-sky-300" href="{{request.scheme}}://{{request.get_host}}">
+                <span class="material-icons text-sky-400">school</span>
+                <span>FOSSEE Workshops</span>
+            </a>
+            {% endif %}
+            <button id="mobile-nav-toggle" class="inline-flex items-center justify-center rounded-md p-2 text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-sky-400 lg:hidden" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span id="mobile-nav-icon" class="material-icons">menu</span>
+            </button>
+        </div>
+        <div id="navbarSupportedContent" class="hidden border-t border-gray-800 px-4 pb-4 lg:block lg:border-0 lg:px-8 lg:pb-2">
+            <div class="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <ul class="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:gap-1">
+                    <li>
+                        <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="/">Home</a>
+                    </li>
+                    <li>
+                        <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'statistics_app:public' %}">Workshop Statistics</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    {% if request.user|has_group:"instructor" %}
+                    <li>
+                        <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'statistics_app:team' %}">Team Statistics</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'workshop_app:workshop_status_instructor' %}">Workshop Status</a>
+                    </li>
+                    {% if not request.user|has_group:"instructor" %}
+                    <li>
+                        <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'workshop_app:propose_workshop' %}">Propose Workshop</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{% url 'workshop_app:workshop_type_list' %}">Workshop Types</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                {% if user.is_authenticated %}
+                <div class="flex items-center">
+                    <div class="dropdown">
+                        <a class="dropdown-toggle inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-white no-underline transition hover:bg-gray-800 hover:text-sky-300" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           <span class="material-icons">account_circle</span>
+                           <span>{{user.get_full_name|title}}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url 'workshop_app:view_own_profile' %}">Profile</a>
+                            <a class="dropdown-item" href="{% url 'password_change' %}">
+                                 Change Password
+                            </a>
+                            <a class="dropdown-item" href="{% url 'workshop_app:logout' %}">Logout</a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+<div class="base-content text-gray-800">
+    {% block content %}
+        <h1>Base Template Content. Please override me</h1>
+    {% endblock %}
+</div>
+
+<script>
+    const mobileNavToggle = document.getElementById("mobile-nav-toggle");
+    const mobileNavIcon = document.getElementById("mobile-nav-icon");
+    const navbarContent = document.getElementById("navbarSupportedContent");
+    if (mobileNavToggle && navbarContent) {
+        mobileNavToggle.addEventListener("click", () => {
+            navbarContent.classList.toggle("hidden");
+            const isOpen = !navbarContent.classList.contains("hidden");
+            mobileNavToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (mobileNavIcon) {
+                mobileNavIcon.textContent = isOpen ? "close" : "menu";
+            }
+        });
+
+        navbarContent.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth < 1024) {
+                    navbarContent.classList.add("hidden");
+                    mobileNavToggle.setAttribute("aria-expanded", "false");
+                    if (mobileNavIcon) {
+                        mobileNavIcon.textContent = "menu";
+                    }
+                }
+            });
+        });
+    }
+
+    {% if messages %}
+        {% for message in messages %}
+            toastr[{% if message.tags %} "{{ message.tags }}" {% else %} "info" {% endif %}]("{{ message }}");
+        {% endfor %}
+    {% endif %}
+</script>
+
+</body>
+<footer class="footer">
+    {% block footer %}
+       <div class="container py-2 text-sm">
+           Developed by FOSSEE group, IIT Bombay
+       </div> 
+    {% endblock %}
+</footer>
+</html>

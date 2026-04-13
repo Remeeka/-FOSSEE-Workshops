@@ -1,0 +1,16 @@
+{% extends 'workshop_app/base.html' %}
+
+	{% block title %}
+		Logged out
+	{% endblock %}
+
+
+	{% block content %}
+		<div class="mx-auto mt-4 w-full max-w-xl rounded-xl bg-white p-6 text-center shadow-sm ring-1 ring-gray-200">
+			<h3 class="mb-2 text-xl font-semibold text-gray-900">You have logged out successfully.</h3>
+			<h4 class="text-base text-gray-700">If you want to login again please
+				<a class="font-medium text-sky-600 no-underline hover:text-sky-700" href="/">click here</a>
+			</h4>
+		</div>
+
+	{% endblock %}

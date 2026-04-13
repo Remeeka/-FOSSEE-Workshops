@@ -1,0 +1,74 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block content %}
+    <div class="mx-auto w-full max-w-6xl px-2 sm:px-4">
+        <div class="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
+            <section class="rounded-2xl bg-gradient-to-br from-sky-600 to-blue-700 p-6 text-white shadow-sm sm:p-8">
+                <h1 class="mb-3 text-3xl font-bold leading-tight sm:text-4xl">Book and manage workshops with ease</h1>
+                <p class="mb-6 text-sm text-sky-100 sm:text-base">Coordinate instructors, monitor workshop activity, and keep everything organized from one dashboard.</p>
+                <div class="space-y-3 text-sm sm:text-base">
+                    <div class="flex items-start gap-3">
+                        <span class="material-icons text-sky-200">event_available</span>
+                        <span>Track workshop status in real time</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="material-icons text-sky-200">insights</span>
+                        <span>Access public and team statistics quickly</span>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="material-icons text-sky-200">groups</span>
+                        <span>Collaborate with coordinators and instructors</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-200 sm:p-6">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-900">Welcome back</h2>
+                    <p class="text-sm text-gray-600">Sign in to continue</p>
+                </div>
+                        <form class="space-y-4 [&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:border-gray-300 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input:focus]:border-blue-400 [&_input:focus]:outline-none [&_input:focus]:ring-2 [&_input:focus]:ring-blue-200" method="post">
+                        {% csrf_token %}
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-dismissible alert-danger">
+                                        <button type="button" class="close" data-dismiss="alert">
+                                            <i class="fa fa-close"></i>
+                                        </button>
+                                        <strong>{{ error|escape }}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div class="alert alert-dismissible alert-danger">
+                                    <button type="button" class="close" data-dismiss="alert">
+                                        <i class="fa fa-close"></i>
+                                    </button>
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="form-group">
+                          <label for="id_username" class="mb-1 block text-sm font-semibold text-gray-700">Username</label>
+                          {{ form.username }}
+                        </div>
+                        <div class="form-group">
+                          <label for="id_password" class="mb-1 block text-sm font-semibold text-gray-700">Password</label>
+                          {{ form.password }}
+                        </div>
+                        <button type="submit" class="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Sign in</button>
+                        </form>
+                        <div class="my-4 border-t border-gray-200"></div>
+                        <div class="space-y-2 text-sm">
+                            <a class="block font-medium text-sky-600 no-underline hover:text-sky-700" href="{% url 'workshop_app:register' %}">New around here? Sign up</a>
+                            <a class="block font-medium text-sky-600 no-underline hover:text-sky-700" href="{% url 'password_reset' %}">Forgot password?</a>
+                        </div>
+            </div>
+            </div>
+    </div>
+{% endblock %}
