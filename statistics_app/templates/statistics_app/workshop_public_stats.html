@@ -1,0 +1,164 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %} Statistics {% endblock %}
+
+{% block content %}
+<div class="mx-auto w-full max-w-7xl p-4 sm:p-6">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <aside class="lg:col-span-1">
+            <form method="GET">
+                <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-200 lg:sticky lg:top-24">
+                    <div class="border-b border-gray-200 p-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">Filters</h3>
+                            </div>
+                            <div>
+                                <a href="{% url 'statistics_app:public' %}" class="inline-flex items-center justify-center rounded-md border border-sky-500 px-3 py-2 text-sm font-medium text-sky-600 no-underline transition hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2">
+                                    <i class="fa fa-times"></i>&nbsp;Clear
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4 p-4">
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-gray-700" for="id_from_date">From date</label>
+                            <div class="[&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:border-gray-300 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input:focus]:border-sky-400 [&_input:focus]:outline-none [&_input:focus]:ring-2 [&_input:focus]:ring-sky-200">
+                                {{form.from_date}}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-gray-700" for="id_to_date">To date</label>
+                            <div class="[&_input]:w-full [&_input]:rounded-md [&_input]:border [&_input]:border-gray-300 [&_input]:px-3 [&_input]:py-2 [&_input]:text-sm [&_input:focus]:border-sky-400 [&_input:focus]:outline-none [&_input:focus]:ring-2 [&_input:focus]:ring-sky-200">
+                                {{form.to_date}}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-gray-700" for="id_workshop_type">Workshop</label>
+                            <div class="[&_select]:w-full [&_select]:rounded-md [&_select]:border [&_select]:border-gray-300 [&_select]:px-3 [&_select]:py-2 [&_select]:text-sm [&_select:focus]:border-sky-400 [&_select:focus]:outline-none [&_select:focus]:ring-2 [&_select:focus]:ring-sky-200">
+                                {{form.workshop_type}}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-gray-700" for="id_state">State</label>
+                            <div class="[&_select]:w-full [&_select]:rounded-md [&_select]:border [&_select]:border-gray-300 [&_select]:px-3 [&_select]:py-2 [&_select]:text-sm [&_select:focus]:border-sky-400 [&_select:focus]:outline-none [&_select:focus]:ring-2 [&_select:focus]:ring-sky-200">
+                                {{form.state}}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-sm font-semibold text-gray-700" for="id_sort">{{form.sort.help_text}}</label>
+                            <div class="[&_select]:w-full [&_select]:rounded-md [&_select]:border [&_select]:border-gray-300 [&_select]:px-3 [&_select]:py-2 [&_select]:text-sm [&_select:focus]:border-sky-400 [&_select:focus]:outline-none [&_select:focus]:ring-2 [&_select:focus]:ring-sky-200">
+                                {{form.sort}}
+                            </div>
+                        </div>
+                        {% if request.user.is_authenticated %}
+                        <div class="text-sm text-gray-700">{{form.show_workshops.help_text}}: {{form.show_workshops}}</div>
+                        {% endif %}
+                        <div class="flex flex-wrap items-center gap-2 pt-2">
+                                <button type="submit" class="inline-flex items-center justify-center rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+                                    <i class="fa fa-eye"></i>&nbsp;View
+                                </button>
+                                <button type="submit" class="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2" name="download" value="download">
+                                    <i class="fa fa-download"></i>&nbsp;Download
+                                </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </aside>
+        <section class="space-y-4 lg:col-span-3">
+            <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200">
+                <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="[&_ul.pagination]:mb-0">
+                    {% include "statistics_app/paginator.html" %}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button class="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2" id="state_graph">
+                            <i class="fa fa-bar-chart"></i>&nbsp;State chart
+                        </button>
+                        <button class="inline-flex items-center justify-center rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2" id="type_graph">
+                            <i class="fa fa-bar-chart"></i>&nbsp;Workshops chart
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50 text-left text-gray-700">
+                            <tr>
+                                <th class="whitespace-nowrap px-4 py-3 font-semibold">Sr No.</th>
+                                <th class="whitespace-nowrap px-4 py-3 font-semibold">Coordinator Name</th>
+                                <th class="whitespace-nowrap px-4 py-3 font-semibold">Institute Name</th>
+                                <th class="whitespace-nowrap px-4 py-3 font-semibold">Instructor Name</th>
+                                <th class="whitespace-nowrap px-4 py-3 font-semibold">Workshop Name</th>
+                                <th class="whitespace-nowrap px-4 py-3 font-semibold">Workshop Date</th>
+                            </tr>
+                        </thead>
+                        {% csrf_token %}
+                        <tbody class="divide-y divide-gray-100 bg-white text-gray-800">
+                        {% for workshop in objects %}
+                            <tr>
+                                <td class="whitespace-nowrap px-4 py-3">{{ forloop.counter0|add:objects.start_index}}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ workshop.coordinator.get_full_name | capfirst }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ workshop.coordinator.profile.institute | capfirst }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ workshop.instructor.get_full_name | capfirst }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ workshop.workshop_type.name }}</td>
+                                <td class="whitespace-nowrap px-4 py-3">{{ workshop.date | date}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-200 [&_ul.pagination]:mb-0">
+                {% include "statistics_app/paginator.html" %}
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div id="dialog" title="Workshops Statistics">
+    <canvas id="myChart"></canvas>
+</div>
+
+<script type="text/javascript">
+    var state_labels = {{ws_states|safe}};
+    var state_data = {{ws_count|safe}};
+    var type_labels = {{ws_type|safe}};
+    var type_data = {{ws_type_count|safe}};
+    var chart;
+    $("#state_graph").on("click", function() {
+        show_graph(state_labels, state_data, "State wise workshops");
+    });
+    $("#type_graph").on("click", function() {
+        show_graph(type_labels, type_data, "Type wise workshops");
+    });
+
+    function show_graph(labels, data, graph_name, chart_name) {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    label: graph_name,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                }]
+            },
+            // Configuration options go here
+            options: {}
+        });
+        $("#dialog").dialog({
+            width: 900,
+            height: 500
+        });
+    }
+</script>
+
+{% endblock %}

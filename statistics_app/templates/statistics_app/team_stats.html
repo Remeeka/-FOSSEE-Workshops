@@ -1,0 +1,52 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}
+ Workshop  Statistics
+{% endblock %}
+
+{% block content %}
+
+<div class="mx-auto w-full max-w-7xl px-2 sm:px-4">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <aside class="lg:col-span-3">
+            <div class="content-card p-4 sm:p-5">
+            <ul class="space-y-2">
+                {% for team in all_teams %}
+                    <li>
+                        <a href="{% url 'statistics_app:team' team.id %}" class="block rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 no-underline transition hover:bg-sky-50 hover:text-sky-700">
+                            Team {{forloop.counter}}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </aside>
+        <section class="lg:col-span-9">
+            <div class="content-card p-4 sm:p-6">
+            <h3 class="mb-4 text-lg font-semibold text-gray-900">Team Workshops Overview</h3>
+            <canvas id="myChart"></canvas>
+            </div>
+        </section>
+        </div>
+</div>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: {{team_labels|safe}},
+            datasets: [{
+                data: {{ws_count|safe}},
+                label: "Team Members Workshops",
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+            }]
+        },
+        // Configuration options go here
+        options: {}
+    });
+</script>
+{% endblock %}

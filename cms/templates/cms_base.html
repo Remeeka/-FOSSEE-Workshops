@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page.title|title }}</title>
+    <link rel="stylesheet" href="{% static 'cms/css/bootstrap.min.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="{% static 'cms/js/jquery-3.4.1.slim.min.js' %}"></script>
+    <script src="{% static 'cms/js/popper.min.js' %}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{ page.imports | safe }}
+    <script src="{% static 'cms/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'workshop_app/css/base.css' %}" type="text/css"/>
+</head>
+<body>
+
+<nav class="fixed top-0 z-50 w-full border-b border-gray-800 bg-gray-900/95 text-white shadow-lg backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 lg:px-8">
+        <a class="inline-flex items-center gap-2 text-lg font-semibold tracking-wide text-white no-underline transition hover:text-sky-300" href="/">
+            <span class="material-icons text-sky-400">school</span>
+            <span>FOSSEE Workshops</span>
+        </a>
+        <button id="cms-mobile-nav-toggle" class="inline-flex items-center justify-center rounded-md p-2 text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-sky-400 lg:hidden" type="button" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span id="cms-mobile-nav-icon" class="material-icons">menu</span>
+        </button>
+    </div>
+    <div id="navbarSupportedContent" class="hidden border-t border-gray-800 px-4 pb-4 lg:block lg:border-0 lg:px-8 lg:pb-2">
+        <div class="mx-auto flex max-w-7xl flex-col gap-2 lg:flex-row lg:items-center lg:justify-end">
+            <ul class="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:gap-1">
+                {% for nav in navs %}
+                    <li>
+                        {% if nav.subnavs %}
+                            <div class="dropdown">
+                                <a class="dropdown-toggle inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="#" id="navbarDropdown" role="button"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ nav.name }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    {% for subnav in nav.subnavs %}
+                                    <a class="dropdown-item" href="{{ subnav.link }}">{{ subnav.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <a class="block rounded-md px-3 py-2 text-sm font-medium text-gray-100 no-underline transition hover:bg-gray-800 hover:text-sky-300" href="{{ nav.link }}">{{ nav.name }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="base-content">
+{{ page.content | safe }}
+</div>
+<script>
+    const cmsMobileNavToggle = document.getElementById("cms-mobile-nav-toggle");
+    const cmsMobileNavIcon = document.getElementById("cms-mobile-nav-icon");
+    const cmsNavbarContent = document.getElementById("navbarSupportedContent");
+    if (cmsMobileNavToggle && cmsNavbarContent) {
+        cmsMobileNavToggle.addEventListener("click", () => {
+            cmsNavbarContent.classList.toggle("hidden");
+            const isOpen = !cmsNavbarContent.classList.contains("hidden");
+            cmsMobileNavToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (cmsMobileNavIcon) {
+                cmsMobileNavIcon.textContent = isOpen ? "close" : "menu";
+            }
+        });
+
+        cmsNavbarContent.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth < 1024) {
+                    cmsNavbarContent.classList.add("hidden");
+                    cmsMobileNavToggle.setAttribute("aria-expanded", "false");
+                    if (cmsMobileNavIcon) {
+                        cmsMobileNavIcon.textContent = "menu";
+                    }
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
